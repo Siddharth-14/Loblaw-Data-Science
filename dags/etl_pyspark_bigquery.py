@@ -13,7 +13,6 @@ def load_data_from_gcs(bucket_name, prefix):
     storage_client = storage.Client()
     blobs = storage_client.list_blobs(bucket_name, prefix=prefix)
     file_paths = [blob.name for blob in blobs]
-    print(file_paths)
     return file_paths
 
 def clean_data(df):
@@ -27,6 +26,7 @@ def clean_data(df):
     }
     df["Order ID"] = pd.to_numeric(df["Order ID"], errors='coerce')
     df.dropna(subset=["Order ID"], inplace=True)
+    print(df.columns)
     df = df.astype(dtype_dict)
     df.drop_duplicates(inplace=True)
     df = df[df["Quantity Ordered"] > 0]
