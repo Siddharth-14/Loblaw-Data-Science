@@ -146,28 +146,27 @@ default_args = {
     'retries': 1,
 }
 
-dag = DAG(
+with DAG(
     'etl_sales_data',
     default_args=default_args,
     description='ETL pipeline for Kaggle sales data using Airflow and GCP',
     schedule_interval=None,
-)
+) as dag:
+    etl_task = PythonOperator(
+        task_id='process_and_clean_data',
+        python_callable=process_and_clean_data,
+        op_args=['us-central1-sales-data-envi-b4a9e081-bucket', 'data/Sales_Data/'],
+    )
 
-etl_task = PythonOperator(
-    task_id='process_and_clean_data',
-    python_callable=process_and_clean_data,
-    op_args=['us-central1-sales-data-envi-b4a9e081-bucket', 'data/Sales_Data/'],
-)
+    load_bq_task = PythonOperator(
+        task_id='load_data_to_bigquery',
+        python_callable=load_data_to_bigquery,
+        op_args=['us-central1-sales-data-envi-b4a9e081-bucket', 'data'],
+    )
 
-load_bq_task = PythonOperator(
-    task_id='load_data_to_bigquery',
-    python_callable=load_data_to_bigquery,
-    op_args=['us-central1-sales-data-envi-b4a9e081-bucket', 'data'],
-)
+    training_task = PythonOperator(
+        task_id='train_models',
+        python_callable=train_models,
+    )
 
-training_task = PythonOperator(
-    task_id='train_models',
-    python_callable=train_models,
-)
-
-etl_task >> load_bq_task >> training_task
+    etl_task >> load_bq_task >> training_task
