@@ -16,24 +16,15 @@ def load_data_from_gcs(bucket_name, prefix):
     return file_paths
 
 def clean_data(df):
-    dtype_dict = {
-        "Order ID": "Int64",
-        "Product": "string",
-        "Quantity Ordered": "int64",
-        "Price Each": "float64",
-        "Order Date": "string",
-        "Purchase Address": "string"
-    }
     df["Order ID"] = pd.to_numeric(df["Order ID"], errors='coerce')
+    df["Quantity Ordered"] = pd.to_numeric(df["Quantity Ordered"], errors='coerce')
+    df["Price Each"] = pd.to_numeric(df["Quantity Ordered"], errors='coerce')
+    df["Order Date"] = pd.to_datetime(df["Order Date"], errors='coerce')
     df.dropna(subset=["Order ID"], inplace=True)
     print(df.columns)
-    df = df.astype(dtype_dict)
     df.drop_duplicates(inplace=True)
     df = df[df["Quantity Ordered"] > 0]
-    df["Order Date"] = pd.to_datetime(df["Order Date"], errors='coerce')
-    df = df.dropna(subset=["Order Date"])
     df.columns = df.columns.str.strip().str.lower().str.replace(' ', '_')
-    df["Quantity Ordered"] = df["Quantity Ordered"].apply(lambda x: x if x > 0 and x < df["Quantity Ordered"].quantile(0.99) else df["Quantity Ordered"].median())
     df["Product"] = df["Product"].str.strip()
     return df
 
