@@ -138,6 +138,7 @@ def train_models():
         upload_file_to_gcs(local_model_filename, model_bucket, destination_blob_name)
     
     print("Training completed.")
+    return "Training completed."
 
 default_args = {
     'owner': 'airflow',
