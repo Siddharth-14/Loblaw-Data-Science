@@ -26,6 +26,19 @@ def clean_data(df):
     df.columns = df.columns.str.strip().str.lower().str.replace(' ', '_')
     return df
 
+def save_to_gcs(df, bucket_name, blob_name):
+    client = storage.Client()
+
+    csv_buffer = io.StringIO()
+    df.to_csv(csv_buffer, index=False)
+    csv_buffer.seek(0)
+
+    bucket = client.get_bucket(bucket_name)
+    blob = bucket.blob(blob_name)
+    blob.upload_from_file(csv_buffer, content_type='text/csv')
+
+    print(f"File uploaded to gs://{bucket_name}/{blob_name}")
+
 def process_and_clean_data(bucket_name, prefix):
     file_paths = load_data_from_gcs(bucket_name, prefix)
 
@@ -36,7 +49,7 @@ def process_and_clean_data(bucket_name, prefix):
 
     df = pd.concat(df_list, ignore_index=True)
     df = clean_data(df)
-    df.to_csv("/data/processed_sales.csv", index=False)
+    save_to_gcs(df, bucket_name, 'data/processed_sales.csv')
 
 def load_data_to_bigquery():
     client = bigquery.Client()
