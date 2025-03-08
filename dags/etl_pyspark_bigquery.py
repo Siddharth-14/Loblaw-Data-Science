@@ -12,8 +12,7 @@ import re
 def load_data_from_gcs(bucket_name, prefix):
     storage_client = storage.Client()
     blobs = storage_client.list_blobs(bucket_name, prefix=prefix)
-    file_pattern = re.compile(r"Sales_.*\.csv$")
-    file_paths = [blob.name for blob in blobs if file_pattern.match(blob.name)]
+    file_paths = [blob.name for blob in blobs]
     print(file_paths)
     return file_paths
 
