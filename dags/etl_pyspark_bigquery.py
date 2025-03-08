@@ -14,6 +14,7 @@ def load_data_from_gcs(bucket_name, prefix):
     blobs = storage_client.list_blobs(bucket_name, prefix=prefix)
     file_pattern = re.compile(r"Sales_.*\.csv$")
     file_paths = [blob.name for blob in blobs if file_pattern.match(blob.name)]
+    print(file_paths)
     return file_paths
 
 def clean_data(df):
@@ -29,19 +30,17 @@ def clean_data(df):
 
 def process_and_clean_data(bucket_name, prefix):
     file_paths = load_data_from_gcs(bucket_name, prefix)
-    # Define column data types
     dtype_dict = {
         "Order ID": "Int64",
         "Product": "string",
         "Quantity Ordered": "int64",
         "Price Each": "float64",
-        "Order Date": "string",  # Will be converted later
+        "Order Date": "string",
         "Purchase Address": "string"
     }
 
     df_list = []
     for file_path in file_paths:
-        # Using the GCS location to load data directly into pandas DataFrame
         df = pd.read_csv(f"gs://{bucket_name}/{file_path}", dtype=dtype_dict, on_bad_lines='skip', header=0)
         df_list.append(df)
 
@@ -57,7 +56,7 @@ def load_data_to_bigquery():
     dataset_ref = bigquery.Dataset(f"{project_id}.{dataset_id}")
     dataset_ref.location = "US"
     client.create_dataset(dataset_ref, exists_ok=True)
-    df = pd.read_csv("/tmp/data/processed_sales.csv")
+    df = pd.read_csv("/data/processed_sales.csv")
     df.to_gbq(table_id, project_id=project_id, if_exists='replace')
 
 default_args = {
@@ -77,7 +76,7 @@ dag = DAG(
 process_task = PythonOperator(
     task_id='process_and_clean_data',
     python_callable=process_and_clean_data,
-    op_args=['us-central1-sales-data-envi-b4a9e081-bucket', '/data/Sales_Data/'],
+    op_args=['us-central1-sales-data-envi-b4a9e081-bucket', 'data/Sales_Data/'],
     dag=dag,
 )
 
