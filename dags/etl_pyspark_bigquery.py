@@ -21,12 +21,9 @@ def clean_data(df):
     df["Price Each"] = pd.to_numeric(df["Quantity Ordered"], errors='coerce')
     df["Order Date"] = pd.to_datetime(df["Order Date"], errors='coerce')
     df.dropna(subset=["Order ID"], inplace=True)
-    df.columns = df.columns.str.strip()
-    print(df.columns)
     df.drop_duplicates(inplace=True)
     df = df[df["Quantity Ordered"] > 0]
     df.columns = df.columns.str.strip().str.lower().str.replace(' ', '_')
-    df["Product"] = df["Product"].str.strip()
     return df
 
 def process_and_clean_data(bucket_name, prefix):
