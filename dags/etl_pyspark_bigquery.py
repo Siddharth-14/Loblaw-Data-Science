@@ -17,7 +17,16 @@ def load_data_from_gcs(bucket_name, prefix):
     return file_paths
 
 def clean_data(df):
+    dtype_dict = {
+        "Order ID": "Int64",
+        "Product": "string",
+        "Quantity Ordered": "int64",
+        "Price Each": "float64",
+        "Order Date": "string",
+        "Purchase Address": "string"
+    }
     df.dropna(inplace=True)
+    df = df.astype(dtype_dict)
     df.drop_duplicates(inplace=True)
     df = df[df["Quantity Ordered"] > 0]
     df["Order Date"] = pd.to_datetime(df["Order Date"], errors='coerce')
@@ -29,18 +38,10 @@ def clean_data(df):
 
 def process_and_clean_data(bucket_name, prefix):
     file_paths = load_data_from_gcs(bucket_name, prefix)
-    dtype_dict = {
-        "Order ID": "Int64",
-        "Product": "string",
-        "Quantity Ordered": "int64",
-        "Price Each": "float64",
-        "Order Date": "string",
-        "Purchase Address": "string"
-    }
 
     df_list = []
     for file_path in file_paths:
-        df = pd.read_csv(f"gs://{bucket_name}/{file_path}", dtype=dtype_dict, on_bad_lines='skip', header=0)
+        df = pd.read_csv(f"gs://{bucket_name}/{file_path}", on_bad_lines='skip', header=0)
         df_list.append(df)
 
     df = pd.concat(df_list, ignore_index=True)
