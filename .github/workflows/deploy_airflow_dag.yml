@@ -25,4 +25,4 @@ jobs:
 
     - name: Upload DAG to Cloud Composer
       run: |
-        gsutil cp dags/etl_pyspark_bigquery.py gs://your-composer-bucket/dags/
+        gsutil cp dags/etl_pyspark_bigquery.py gs://us-central1-sales-data-envi-b4a9e081-bucket/dags/
