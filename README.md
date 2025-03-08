@@ -45,6 +45,26 @@ Ensure you have the following installed:
    ```bash
    gcloud auth application-default login
 
+## Running the Jupyter Notebook
+### Prerequisites
+Ensure the virtual environment is activated before running the notebook.
+
+### Steps to Run the Notebook
+1. Navigate to the notebooks/ directory:
+   ```bash
+   cd notebooks
+   ```
+2. Launch Jupyter Notebook:
+   ```bash
+   jupyter notebook
+   ```
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. Open the  statistical.ipynb file and execute the cells in order.
+5. Ensure that the required data files and configurations are in place.
+
 ## Usage
 - DAG in `dags/` directory to orchestrate data workflows.
 - Run data processing and ml scripts from `notebooks/`.
@@ -58,6 +78,7 @@ Ensure you have the following installed:
 
 ## References
 - [YouTube Video on Apache Airflow & GCP](https://www.youtube.com/watch?v=ZgTf523XM0g)
+- [ANOVA, T-test, and Other Statistical Tests with Python](https://towardsdatascience.com/anova-t-test-and-other-statistical-tests-with-python-e7a36a2fdc0c/)
 
 ## Contributors
 - **Siddharth** (Lead Developer)
