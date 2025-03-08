@@ -25,7 +25,8 @@ def clean_data(df):
         "Order Date": "string",
         "Purchase Address": "string"
     }
-    df.dropna(inplace=True)
+    df["Order ID"] = pd.to_numeric(df["Order ID"], errors='coerce')
+    df.dropna(subset=["Order ID"], inplace=True)
     df = df.astype(dtype_dict)
     df.drop_duplicates(inplace=True)
     df = df[df["Quantity Ordered"] > 0]
