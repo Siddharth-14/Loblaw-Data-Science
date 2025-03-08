@@ -27,7 +27,7 @@ def clean_data(df):
     return df
 
 def process_and_save_data():
-    DATA_DIR = "/tmp/data/"
+    DATA_DIR = "/tmp/data/Sales_Data"
     csv_files = [os.path.join(DATA_DIR, f) for f in os.listdir(DATA_DIR) if f.startswith("Sales_") and f.endswith("_2019.csv")]
     df_list = [pd.read_csv(f) for f in csv_files]
     df = pd.concat(df_list, ignore_index=True)
