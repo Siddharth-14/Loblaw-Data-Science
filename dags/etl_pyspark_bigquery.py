@@ -38,7 +38,7 @@ def process_and_save_data():
         "Order Date": "string",  # Will be converted later
         "Purchase Address": "string"
     }
-    df_list = [pd.read_csv(f, dtype=dtype_dict, parse_dates=["Order Date"], dayfirst=False, infer_datetime_format=True) for f in csv_files]
+    df_list = [pd.read_csv(f, dtype=dtype_dict, parse_dates=["Order Date"], on_bad_lines='skip', header=0) for f in csv_files]
     df = pd.concat(df_list, ignore_index=True)
     df = clean_data(df)
     df.to_csv("/tmp/data/processed_sales.csv", index=False)
