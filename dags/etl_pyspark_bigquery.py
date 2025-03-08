@@ -114,11 +114,11 @@ def train_models():
     model_bucket = "us-central1-sales-data-envi-b4a9e081-bucket"
     destination_folder = "models"
 
-    unique_products = train_df['product_id'].unique()
+    unique_products = train_df['product'].unique()
     print(f"Training models for {len(unique_products)} products...")
     
     for pid in unique_products:
-        prod_df = train_df[train_df['product_id'] == pid].copy()
+        prod_df = train_df[train_df['product'] == pid].copy()
         if prod_df.shape[0] < 20:
             print(f"Skipping {pid} due to insufficient data.")
             continue
@@ -128,7 +128,7 @@ def train_models():
         model = RandomForestRegressor(random_state=42)
         model.fit(X, y)
         
-        local_model_filename = f"models/{pid}_random_forest.pkl"
+        local_model_filename = f"models/{pid}.pkl"
         
         with open(local_model_filename, "wb") as f:
             pickle.dump(model, f)
