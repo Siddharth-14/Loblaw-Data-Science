@@ -40,7 +40,7 @@ def process_and_clean_data(bucket_name, prefix):
 
     df_list = []
     for file_path in file_paths:
-        df = pd.read_csv(f"gs://{bucket_name}/{file_path}", dtype=dtype_dict, on_bad_lines='skip', header=0)
+        df = pd.read_csv(f"gs://{bucket_name}/{file_path}", dtype=dtype_dict, on_bad_lines='skip', header=0, error_bad_lines=False)
         df_list.append(df)
 
     df = pd.concat(df_list, ignore_index=True)
