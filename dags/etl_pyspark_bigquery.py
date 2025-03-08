@@ -5,15 +5,16 @@ from airflow.providers.google.cloud.transfers.local_to_gcs import LocalFilesyste
 from airflow.operators.python import PythonOperator
 from airflow.utils.dates import days_ago
 import pandas as pd
-import os
-import subprocess
 from google.cloud import bigquery
+from google.cloud import storage
+import re
 
-def download_data():
-    DATA_DIR = "/tmp/data/"
-    kaggle_dataset = "pigment/big-sales-data"
-    os.makedirs(DATA_DIR, exist_ok=True)
-    subprocess.run(["kaggle", "datasets", "download", "-d", kaggle_dataset, "-p", DATA_DIR, "--unzip"])
+def load_data_from_gcs(bucket_name, prefix):
+    storage_client = storage.Client()
+    blobs = storage_client.list_blobs(bucket_name, prefix=prefix)
+    file_pattern = re.compile(r"Sales_[A-Za-z]+_2019\.csv$")
+    file_paths = [blob.name for blob in blobs if file_pattern.match(blob.name)]
+    return file_paths
 
 def clean_data(df):
     df.dropna(inplace=True)
@@ -26,9 +27,8 @@ def clean_data(df):
     df["Product"] = df["Product"].str.strip()
     return df
 
-def process_and_save_data():
-    DATA_DIR = "/tmp/data/Sales_Data"
-    csv_files = [os.path.join(DATA_DIR, f) for f in os.listdir(DATA_DIR) if f.startswith("Sales_") and f.endswith("_2019.csv")]
+def process_and_clean_data(bucket_name, prefix):
+    file_paths = load_data_from_gcs(bucket_name, prefix)
     # Define column data types
     dtype_dict = {
         "Order ID": "Int64",
@@ -38,10 +38,16 @@ def process_and_save_data():
         "Order Date": "string",  # Will be converted later
         "Purchase Address": "string"
     }
-    df_list = [pd.read_csv(f, dtype=dtype_dict, on_bad_lines='skip', header=0) for f in csv_files]
+
+    df_list = []
+    for file_path in file_paths:
+        # Using the GCS location to load data directly into pandas DataFrame
+        df = pd.read_csv(f"gs://{bucket_name}/{file_path}", dtype=dtype_dict, on_bad_lines='skip', header=0)
+        df_list.append(df)
+
     df = pd.concat(df_list, ignore_index=True)
     df = clean_data(df)
-    df.to_csv("/tmp/data/processed_sales.csv", index=False)
+    df.to_csv("/data/processed_sales.csv", index=False)
 
 def load_data_to_bigquery():
     client = bigquery.Client()
@@ -65,34 +71,21 @@ dag = DAG(
     'etl_sales_data',
     default_args=default_args,
     description='ETL pipeline for Kaggle sales data using Airflow and GCP',
-    schedule_interval='@daily',
-)
-
-download_task = PythonOperator(
-    task_id='download_data',
-    python_callable=download_data,
-    dag=dag,
+    schedule_interval=None,
 )
 
 process_task = PythonOperator(
-    task_id='process_and_save_data',
-    python_callable=process_and_save_data,
-    dag=dag,
-)
-
-upload_task = LocalFilesystemToGCSOperator(
-    task_id='upload_to_gcs',
-    src="/tmp/data/processed_sales.csv",
-    dst="processed_sales.csv",
-    bucket="gs://us-central1-sales-data-envi-b4a9e081-bucket/dags",
-    mime_type="text/csv",
+    task_id='process_and_clean_data',
+    python_callable=process_and_clean_data,
+    op_args=['us-central1-sales-data-envi-b4a9e081-bucket', '/data/Sales_Data'],
     dag=dag,
 )
 
 load_task = PythonOperator(
     task_id='load_data_to_bigquery',
     python_callable=load_data_to_bigquery,
+    op_args=['{{ task_instance.xcom_pull(task_ids="process_and_clean_data") }}'], 
     dag=dag,
 )
 
-download_task >> process_task >> upload_task >> load_task
+process_task >> load_task
