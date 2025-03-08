@@ -17,7 +17,6 @@ def load_data_from_gcs(bucket_name, prefix):
     return file_paths
 
 def clean_data(df):
-    df["Order ID"] = pd.to_numeric(df["Order ID"], errors='coerce')
     df["Quantity Ordered"] = pd.to_numeric(df["Quantity Ordered"], errors='coerce')
     df["Price Each"] = pd.to_numeric(df["Quantity Ordered"], errors='coerce')
     df["Order Date"] = pd.to_datetime(df["Order Date"], errors='coerce')
