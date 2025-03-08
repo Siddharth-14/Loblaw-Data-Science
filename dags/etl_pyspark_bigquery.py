@@ -29,7 +29,16 @@ def clean_data(df):
 def process_and_save_data():
     DATA_DIR = "/tmp/data/Sales_Data"
     csv_files = [os.path.join(DATA_DIR, f) for f in os.listdir(DATA_DIR) if f.startswith("Sales_") and f.endswith("_2019.csv")]
-    df_list = [pd.read_csv(f) for f in csv_files]
+    # Define column data types
+    dtype_dict = {
+        "Order ID": "Int64",
+        "Product": "string",
+        "Quantity Ordered": "int64",
+        "Price Each": "float64",
+        "Order Date": "string",  # Will be converted later
+        "Purchase Address": "string"
+    }
+    df_list = [pd.read_csv(f, dtype=dtype_dict, parse_dates=["Order Date"], dayfirst=False, infer_datetime_format=True) for f in csv_files]
     df = pd.concat(df_list, ignore_index=True)
     df = clean_data(df)
     df.to_csv("/tmp/data/processed_sales.csv", index=False)
