@@ -77,7 +77,7 @@ dag = DAG(
 process_task = PythonOperator(
     task_id='process_and_clean_data',
     python_callable=process_and_clean_data,
-    op_args=['us-central1-sales-data-envi-b4a9e081-bucket', '/data/Sales_Data'],
+    op_args=['us-central1-sales-data-envi-b4a9e081-bucket', '/data/Sales_Data/'],
     dag=dag,
 )
 
