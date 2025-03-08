@@ -52,14 +52,14 @@ def process_and_clean_data(bucket_name, prefix):
     df = clean_data(df)
     save_to_gcs(df, bucket_name, 'data/processed_sales.csv')
 
-def load_data_to_bigquery(df):
+def load_data_to_bigquery(bucket_name, file_path):
     client = bigquery.Client()
     project_id = "big-sales-data-453023"
     dataset_id = "sales_data"
     table_id = f"{project_id}.{dataset_id}.sales"
     dataset_ref = bigquery.Dataset(f"{project_id}.{dataset_id}")
     dataset_ref.location = "US"
-    client.create_dataset(dataset_ref, exists_ok=True)
+    df = pd.read_csv(f"gs://{bucket_name}/{file_path}/processed_sales.csv")
     df.to_gbq(table_id, project_id=project_id, if_exists='replace')
 
 default_args = {
@@ -86,7 +86,7 @@ process_task = PythonOperator(
 load_task = PythonOperator(
     task_id='load_data_to_bigquery',
     python_callable=load_data_to_bigquery,
-    op_args=['{{ task_instance.xcom_pull(task_ids="process_and_clean_data") }}'], 
+    op_args=['us-central1-sales-data-envi-b4a9e081-bucket', 'data'], 
     dag=dag,
 )
 
