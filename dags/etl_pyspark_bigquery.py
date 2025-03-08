@@ -21,6 +21,7 @@ def clean_data(df):
     df["Price Each"] = pd.to_numeric(df["Quantity Ordered"], errors='coerce')
     df["Order Date"] = pd.to_datetime(df["Order Date"], errors='coerce')
     df.dropna(subset=["Order ID"], inplace=True)
+    df.columns = df.columns.str.strip()
     print(df.columns)
     df.drop_duplicates(inplace=True)
     df = df[df["Quantity Ordered"] > 0]
