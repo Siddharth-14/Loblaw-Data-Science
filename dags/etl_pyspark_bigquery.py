@@ -77,12 +77,12 @@ def create_time_features(df):
     return df
 
 def add_lag_features(df, lag_days=1, window=7):
-    df = df.sort_values(['product_id', 'order_date']).copy()
-    df['lag_1'] = df.groupby('product_id')['quantity_ordered'].shift(lag_days)
-    df['rolling_mean_7'] = df.groupby('product_id')['quantity_ordered']\
+    df = df.sort_values(['product', 'order_date']).copy()
+    df['lag_1'] = df.groupby('product')['quantity_ordered'].shift(lag_days)
+    df['rolling_mean_7'] = df.groupby('product')['quantity_ordered']\
                               .transform(lambda x: x.shift(1).rolling(window=window, min_periods=1).mean())
     for col in ['lag_1', 'rolling_mean_7']:
-        df[col] = df.groupby('product_id')[col].transform(lambda x: x.fillna(x.mean()))
+        df[col] = df.groupby('product')[col].transform(lambda x: x.fillna(x.mean()))
     return df
 
 def upload_file_to_gcs(local_file, bucket_name, destination_blob_name):
