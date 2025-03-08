@@ -1,6 +1,7 @@
 from airflow import DAG
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
-from airflow.providers.google.cloud.operators.gcs import GCSCreateBucketOperator, GCSUploadFilesOperator
+from airflow.providers.google.cloud.operators.gcs import GCSCreateBucketOperator
+from airflow.providers.google.cloud.transfers.local_to_gcs import LocalFilesystemToGCSOperator
 from airflow.operators.python import PythonOperator
 from airflow.utils.dates import days_ago
 import pandas as pd
@@ -25,7 +26,7 @@ def clean_data(df):
     df["Product"] = df["Product"].str.strip()
     return df
 
-def process_and_upload_to_gcs():
+def process_and_save_data():
     DATA_DIR = "/tmp/data/"
     csv_files = [os.path.join(DATA_DIR, f) for f in os.listdir(DATA_DIR) if f.startswith("Sales_") and f.endswith("_2019.csv")]
     df_list = [pd.read_csv(f) for f in csv_files]
@@ -46,7 +47,7 @@ def load_data_to_bigquery():
 
 default_args = {
     'owner': 'airflow',
-    'depends_on_past': True,
+    'depends_on_past': False,
     'start_date': days_ago(1),
     'retries': 1,
 }
@@ -65,8 +66,17 @@ download_task = PythonOperator(
 )
 
 process_task = PythonOperator(
-    task_id='process_and_upload_to_gcs',
-    python_callable=process_and_upload_to_gcs,
+    task_id='process_and_save_data',
+    python_callable=process_and_save_data,
+    dag=dag,
+)
+
+upload_task = LocalFilesystemToGCSOperator(
+    task_id='upload_to_gcs',
+    src="/tmp/data/processed_sales.csv",
+    dst="processed_sales.csv",
+    bucket="gs://us-central1-sales-data-envi-b4a9e081-bucket/dags",
+    mime_type="text/csv",
     dag=dag,
 )
 
@@ -76,4 +86,4 @@ load_task = PythonOperator(
     dag=dag,
 )
 
-download_task >> process_task >> load_task
+download_task >> process_task >> upload_task >> load_task
