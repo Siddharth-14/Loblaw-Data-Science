@@ -158,21 +158,15 @@ with DAG(
     etl_task = PythonOperator(
         task_id='process_and_clean_data',
         python_callable=process_and_clean_data,
-        op_args=['us-central1-sales-data-envi-b4a9e081-bucket', 'data/Sales_Data/'],
-        dag=dag,
+        op_args=['us-central1-sales-data-envi-b4a9e081-bucket', 'data/Sales_Data/']
     )
 
     load_bq_task = PythonOperator(
         task_id='load_data_to_bigquery',
         python_callable=load_data_to_bigquery,
-        op_args=['us-central1-sales-data-envi-b4a9e081-bucket', 'data'],
-        dag=dag,
+        op_args=['us-central1-sales-data-envi-b4a9e081-bucket', 'data']
     )
 
-    training_task = PythonOperator(
-        task_id='train_models',
-        python_callable=train_models,
-        dag=dag,
-    )
+    training_task = train_models()
 
     etl_task >> load_bq_task >> training_task
