@@ -8,6 +8,7 @@ import pandas as pd
 from google.cloud import bigquery
 from google.cloud import storage
 import re
+import io
 
 def load_data_from_gcs(bucket_name, prefix):
     storage_client = storage.Client()
