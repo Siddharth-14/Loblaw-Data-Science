@@ -1,7 +1,7 @@
 # Data Engineering & Machine Learning Pipeline on GCP
 
 ## Overview
-This project focuses on building a **scalable ETL and Machine Learning pipeline** using **Apache Airflow** on **Google Cloud Platform (GCP)**. The pipeline automates data extraction, transformation, and storage in **BigQuery**, followed by **machine learning modeling** and deployment.
+This project aims on developing a **scalable ETL & Machine Learning pipeline** using **Apache Airflow** on **Google Cloud Platform (GCP) using Google Compose**. The pipeline automates data extraction from Kaggle and stores in Google Storage, transformation using AirFlow, and storage in **BigQuery**, followed by **machine learning modeling** and store models inside Google Storage during deployment.
 
 ## Features
 - **ETL Pipeline**: Data extraction, transformation (Pandas), and storage.
@@ -41,9 +41,6 @@ Ensure you have the following installed:
    ```bash
    pip install -r requirements.txt
    ```
-4. Configure Google Cloud authentication:
-   ```bash
-   gcloud auth application-default login
 
 ## Running the Jupyter Notebook
 ### Prerequisites
@@ -62,24 +59,30 @@ Ensure the virtual environment is activated before running the notebook.
    ```bash
    pip install -r requirements.txt
    ```
-4. Open the  statistical.ipynb file and execute the cells in order.
-5. Ensure that the required data files and configurations are in place.
+4. Open the `.ipynb` files and execute the cells in order to avoid errors.
 
 ## Usage
 - DAG in `dags/` directory to orchestrate data workflows.
-- Run data processing and ml scripts from `notebooks/`.
+- Run data analysis and ml scripts from `notebooks/`.
 - Task 3 models are stored in `models/`
 - CI/CD automation file for Github Actions in `.github/`
-- Store transformed data in BigQuery for analytics.
-- Trigger ML model training and evaluation workflows.
+- Store transformed data in BigQuery for analytics, ml models and data analysis tasks.
 
 ## CI/CD Automation
 - Push changes to GitHub to trigger GitHub Actions workflows.
 
+## AI Assistance Disclosure
+### Part A - Question 5
+In compliance with the guidelines of the Loblaw Data Challenge, AI tools were employed for generating and debugging code specifically for Question 5 of Part A. Here's a detailed overview of how AI was utilized:
+- AI Usage: Employed AI tools for code suggestions and debugging, focusing on enhancing code quality and functionality.
+- Progress and Functionality: The code with AI assistance is operational with partial capabilities. Priority was given to ensure that the code runs reliably and handles the core functionalities as intended.
+- Code Status: The code is stable and executes without errors, performing the essential tasks required by Question 5. It is ready for demonstration if selected for further rounds of interviews.
+  
+This disclosure ensures transparency in the use of AI tools as per the challenge rules and demonstrates a proactive approach to ethical AI usage.
+
 ## References
 - [YouTube Video on Apache Airflow & GCP](https://www.youtube.com/watch?v=ZgTf523XM0g)
 - [ANOVA, T-test, and Other Statistical Tests with Python](https://towardsdatascience.com/anova-t-test-and-other-statistical-tests-with-python-e7a36a2fdc0c/)
-- Used AI to help write the .github/workflows/deploy_airflow_dag.yml function
 
 ## Contributors
-- **Siddharth** (Lead Developer)
+- **Siddharth**
