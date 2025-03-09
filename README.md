@@ -79,6 +79,7 @@ Ensure the virtual environment is activated before running the notebook.
 ## References
 - [YouTube Video on Apache Airflow & GCP](https://www.youtube.com/watch?v=ZgTf523XM0g)
 - [ANOVA, T-test, and Other Statistical Tests with Python](https://towardsdatascience.com/anova-t-test-and-other-statistical-tests-with-python-e7a36a2fdc0c/)
+- Used AI to help write the .github/workflows/deploy_airflow_dag.yml function
 
 ## Contributors
 - **Siddharth** (Lead Developer)
