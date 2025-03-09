@@ -73,11 +73,10 @@ Ensure the virtual environment is activated before running the notebook.
 
 ## AI Assistance Disclosure
 ### Part A - Question 5
-In compliance with the guidelines of the Loblaw Data Challenge, AI tools were employed for generating and debugging code specifically for Question 5 of Part A. Here's a detailed overview of how AI was utilized:
-- AI Usage: Employed AI tools for code suggestions and debugging, focusing on enhancing code quality and functionality.
-- Progress and Functionality: The code with AI assistance is operational with partial capabilities. Priority was given to ensure that the code runs reliably and handles the core functionalities as intended.
-- Code Status: The code is stable and executes without errors, performing the essential tasks required by Question 5. It is ready for demonstration if selected for further rounds of interviews.
-  
+AI was utilized:
+- AI Usage: Used AI tools for code generation and debugging.
+- Progress and Functionality: The code with AI assistance is operational with all capabilities.
+
 This disclosure ensures transparency in the use of AI tools as per the challenge rules and demonstrates a proactive approach to ethical AI usage.
 
 ## References
