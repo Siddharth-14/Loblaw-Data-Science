@@ -3,7 +3,7 @@ name: Deploy DAG to Cloud Composer
 on:
   push:
     branches:
-      - main  # Change to the branch you want to trigger deployment
+      - main
 
 jobs:
   deploy:
@@ -16,12 +16,12 @@ jobs:
     - name: Authenticate with Google Cloud
       uses: google-github-actions/auth@v2
       with:
-        credentials_json: ${{ secrets.GCP_SA_KEY }}  # Set this in GitHub Secrets
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
 
     - name: Set up Google Cloud SDK
       uses: google-github-actions/setup-gcloud@v2
       with:
-        project_id: your-gcp-project-id  # Replace with your GCP project ID
+        project_id: your-gcp-project-id
 
     - name: Upload DAG to Cloud Composer
       run: |
