@@ -61,6 +61,8 @@ Ensure the virtual environment is activated before running the notebook.
    ```
 4. Open the `.ipynb` files and execute the cells in order to avoid errors.
 
+### Note:- For my process flow I saved the processed data inside BigQuery however for your easy to run I have saved a copy of the processed data locally. Normally it is a bad practice but just for ease i have performed this extra step. My notebook code is written in a way that in case it does not find the credentials it will use the local data.
+
 ## Usage
 - DAG in `dags/` directory to orchestrate data workflows.
 - Run data analysis and ml scripts from `notebooks/`.
